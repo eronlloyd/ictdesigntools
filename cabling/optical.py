@@ -44,6 +44,11 @@ class OpticalSplice:
     name: Optional[str]
     insertion_loss_db: float=0.1
 
+@dataclass(frozen=True)
+class OpticalSplitter:
+    name: Optional[str]
+    insertion_loss_db: float=0.1
+
 
 @dataclass(frozen=True)
 class OpticalConnector:
@@ -56,12 +61,14 @@ class CableChannel:
     name: Optional[str]
     spans: list[OpticalCable]
     splices: list[OpticalSplice]
+    splitters: list[OpticalSplitter]
     connectors: list[OpticalConnector]
 
     def budget(cables, splices, connectors) -> OpticalLossBudget:
         budget = round(sum(
         [cable.loss_db for cable in cables] +
         [splice.loss_db for splice in splices] +
+        [splitter.loss_db for splitter in splitters] +
         [connector.loss_db for connector in connectors]), 3)
         return OpticalLossBudget(budget)
 
@@ -139,6 +146,7 @@ class OpticalTransceiver:
 
 @dataclass(frozen=True)
 class OpticalEndpoints:
+    """Represents transceiver endpoints as part of an optical channel."""
     name: str
 
 
